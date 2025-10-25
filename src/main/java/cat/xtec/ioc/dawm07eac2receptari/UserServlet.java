@@ -105,12 +105,13 @@ public class UserServlet extends HttpServlet {
 
         JSONObject json = new JSONObject();
 
-        // Validación Bean Validation
+        // VALIDATION
         Set<ConstraintViolation<UserLocal>> violations = validator.validate(userBean);
 
         try {
+            // if there is any error
             if (!violations.isEmpty()) {
-                // Cogemos el primer mensaje de error
+                // get first violation message
                 String msg = violations.iterator().next().getMessage();
                 json.put("resposta", msg);
 

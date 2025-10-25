@@ -136,16 +136,15 @@ public class Receptari extends HttpServlet {
 
         // get parameters from url request
         // "Receptari?action=addReceptaPuntuacions&recepta=" + recepta + "&puntuacio=" + puntuacio;.
-        String nomRecepta = request.getParameter("recepta");
-        String puntuacioStr = request.getParameter("puntuacio");
+        String name = request.getParameter("recepta");
+        Double points = Double.valueOf(request.getParameter("puntuacio"));
 
         JSONObject json = new JSONObject();
-        Double puntuacio = Double.valueOf(puntuacioStr);
 
         // search for recipe to set points
         for (Recepta r : receptes) {
-            if (r.getName().equalsIgnoreCase(nomRecepta)) {
-                r.setPuntuacio(r.getPuntuacio() + puntuacio);
+            if (r.getName().equalsIgnoreCase(name)) {
+                r.setPuntuacio(points);
                 addReceptaToSession(request, r);
 
                 try {
@@ -200,7 +199,6 @@ public class Receptari extends HttpServlet {
 
         // copy to project img folder
         String uploadPath = getServletContext().getRealPath("") + File.separator + UPLOAD_DIR;
-        File uploadDir = new File(uploadPath);
         Path source = Paths.get("C:\\Users\\Jose\\tmp", fileName);
         Path target = Paths.get(uploadPath, fileName);
         Files.move(source, target, StandardCopyOption.REPLACE_EXISTING);
@@ -213,11 +211,7 @@ public class Receptari extends HttpServlet {
         // Redirect html
         response.sendRedirect("index.html");
 
-    }
-
-    private boolean isValidFileName(String paramName, String fileName) {
-        return false; //Posa't per que no doni error l'IDE
-    }
+    }    
 
     private void addReceptaToSession(HttpServletRequest request, Recepta recepta) {
         PuntuacionsLocal puntuacionsBean = (PuntuacionsLocal) request.getSession().getAttribute("puntuacionsbean");
@@ -234,7 +228,8 @@ public class Receptari extends HttpServlet {
     private boolean checkReceptaPuntuadaSession(HttpServletRequest request, Recepta recepta) {
         PuntuacionsLocal puntuacionsBean = (PuntuacionsLocal) request.getSession().getAttribute("puntuacionsbean");
 
-        if (puntuacionsBean != null) {
+        // read points in case bean exist and there is any point
+        if (puntuacionsBean != null && puntuacionsBean.getReceptesPuntuades() != null) {
             // read all recipes added in puntuacionsBean
             for (Recepta r : puntuacionsBean.getReceptesPuntuades()) {
                 if (r.getName().equalsIgnoreCase(recepta.getName())) {

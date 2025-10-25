@@ -1,5 +1,6 @@
 package cat.xtec.ioc.dawm07eac2receptari;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Stateful;
 
@@ -9,7 +10,8 @@ import javax.ejb.Stateful;
  */
 @Stateful
 public class Puntuacions implements PuntuacionsLocal {
-    private List<Recepta> receptesPuntuades;
+    // initialize to avoid errors if access points without any point
+    private List<Recepta> receptesPuntuades = new ArrayList<>();
 
     @Override
     public List<Recepta> getReceptesPuntuades() {

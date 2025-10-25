@@ -60,7 +60,7 @@ public class PuntuacionsServlet extends HttpServlet {
         JSONArray array = new JSONArray();
 
         try {
-            for (Recepta r : puntuacionsBean.getReceptesPuntuades()) { // suposem que Receptari té getter estàtic
+            for (Recepta r : puntuacionsBean.getReceptesPuntuades()) { 
                 JSONObject obj = new JSONObject();
                 obj.put("name", r.getName());
                 obj.put("puntuacio", r.getPuntuacio());
