@@ -166,6 +166,8 @@ public class Receptari extends HttpServlet {
     protected void createRecepta(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
 
         // GET INPUTS
         String name = request.getParameter("fpname");
@@ -173,23 +175,8 @@ public class Receptari extends HttpServlet {
         String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
 
         // VALIDATIONS
-        // Validate name recipe and name file
-        if (!validator.isValidFileImageName(name, fileName)) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST,
-                    "Error, recepta enviat NO és igual al nom del fitxer d'imatge pujat sense l'extensió");
-            return;
-        }
-        // Validate if exist in current recipe list
-        boolean exists = false;
-        for (Recepta r : receptes) {
-            if (r.getName().equalsIgnoreCase(name)) {
-                exists = true;
-                break;
-            }
-        }
-        if (exists) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST,
-                    "Error, no poden haver-hi receptes repetides");
+        if (!isValidFileName(name, fileName)) {
+            response.sendRedirect("index.html");
             return;
         }
 
@@ -211,7 +198,21 @@ public class Receptari extends HttpServlet {
         // Redirect html
         response.sendRedirect("index.html");
 
-    }    
+    }
+
+    private boolean isValidFileName(String paramName, String fileName) {
+        // Validate name recipe and name file
+        if (!validator.isValidFileImageName(paramName, fileName)) {
+            return false;
+        }
+        // Validate if exist in current recipe list
+        for (Recepta r : receptes) {
+            if (r.getName().equalsIgnoreCase(paramName)) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     private void addReceptaToSession(HttpServletRequest request, Recepta recepta) {
         PuntuacionsLocal puntuacionsBean = (PuntuacionsLocal) request.getSession().getAttribute("puntuacionsbean");
